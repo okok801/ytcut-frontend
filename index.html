@@ -24,6 +24,16 @@
                 <label for="url">影片網址</label>
                 <input type="url" id="url" placeholder="https://www.youtube.com/watch?v=..." required>
             </div>
+            
+            <div class="input-group">
+                <label for="quality">下載畫質 (影響下載速度與檔案大小)</label>
+                <select id="quality" style="width: 100%; padding: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: #fff; font-size: 1rem; margin-top: 0.5rem; outline: none; appearance: none; -moz-appearance: none; -webkit-appearance: none;">
+                    <option value="best" style="background: #1e1e2e; color: #fff;">最高畫質 (檔案最大，最慢)</option>
+                    <option value="1080" style="background: #1e1e2e; color: #fff;">1080p 高畫質</option>
+                    <option value="720" style="background: #1e1e2e; color: #fff;" selected>720p 標準畫質 (推薦，速度較快)</option>
+                    <option value="480" style="background: #1e1e2e; color: #fff;">480p 低畫質 (最快)</option>
+                </select>
+            </div>
 
             <div id="video-preview" class="hidden">
                 <!-- Video or Iframe will be injected here -->
@@ -41,11 +51,11 @@
             <div class="time-inputs">
                 <div class="input-group">
                     <label for="start-time">開始時間 (留空則為開頭)</label>
-                    <input type="text" id="start-time" placeholder="00:00:00" pattern="^([0-9]{2}:)?[0-9]{2}:[0-9]{2}$">
+                    <input type="text" id="start-time" placeholder="00:00:00">
                 </div>
                 <div class="input-group">
                     <label for="end-time">結束時間 (留空則為結尾)</label>
-                    <input type="text" id="end-time" placeholder="整部影片長度" pattern="^([0-9]{2}:)?[0-9]{2}:[0-9]{2}$">
+                    <input type="text" id="end-time" placeholder="整部影片長度">
                 </div>
             </div>
 

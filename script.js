@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = urlInput.value;
         const startTime = startTimeInput.value;
         const endTime = endTimeInput.value;
+        const quality = document.getElementById('quality') ? document.getElementById('quality').value : 'best';
 
         // Reset UI
         statusMessage.className = 'hidden';
@@ -182,7 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     url: url,
                     start_time: startTime,
-                    end_time: endTime
+                    end_time: endTime,
+                    quality: quality
                 })
             });
 
