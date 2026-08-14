@@ -165,6 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const startTime = startTimeInput.value;
         const endTime = endTimeInput.value;
         const quality = document.getElementById('quality') ? document.getElementById('quality').value : 'best';
+        const videoTitle = videoTitleSpan.textContent.trim() || 'video';
 
         // Reset UI
         statusMessage.className = 'hidden';
@@ -184,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     url: url,
                     start_time: startTime,
                     end_time: endTime,
-                    quality: quality
+                    quality: quality,
+                    title: videoTitle
                 })
             });
 
@@ -214,11 +216,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         const blob = await fileRes.blob();
                         const downloadUrl = window.URL.createObjectURL(blob);
                         
-                        let filename = 'video.mp4';
+                        let safeTitle = videoTitle.replace(/[\\/:*?"<>|]/g, '_');
+                        let filename = `${safeTitle}.mp4`;
                         if (startTime.trim() || endTime.trim()) {
                             const startLabel = startTime.trim() ? startTime.trim().replace(/:/g,'-') : 'start';
                             const endLabel = endTime.trim() ? endTime.trim().replace(/:/g,'-') : 'end';
-                            filename = `clip_${startLabel}_${endLabel}.mp4`;
+                            filename = `${safeTitle}_${startLabel}_${endLabel}.mp4`;
                         }
                         
                         const a = document.createElement('a');
