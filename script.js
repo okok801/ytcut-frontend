@@ -7,8 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewControls = document.getElementById('preview-controls');
     const setStartBtn = document.getElementById('set-start-btn');
     const setEndBtn = document.getElementById('set-end-btn');
-    const startTimeInput = document.getElementById('start-time');
-    const endTimeInput = document.getElementById('end-time');
+    const setStartBtn = document.getElementById('set-start-btn');
+    const setEndBtn = document.getElementById('set-end-btn');
+    const segmentsContainer = document.getElementById('segments-container');
+    const addSegmentBtn = document.getElementById('add-segment-btn');
     const submitBtn = document.getElementById('submit-btn');
     const btnText = submitBtn.querySelector('.btn-text');
     const loader = submitBtn.querySelector('.loader');
@@ -139,15 +141,64 @@ document.addEventListener('DOMContentLoaded', () => {
     // Control buttons to set start/end times from native player
     setStartBtn.addEventListener('click', () => {
         if (currentVideoElement) {
-            startTimeInput.value = formatTime(currentVideoElement.currentTime);
+            const timeStr = formatTime(currentVideoElement.currentTime);
+            const rows = segmentsContainer.querySelectorAll('.segment-row');
+            if (rows.length > 0) {
+                rows[rows.length - 1].querySelector('.start-time').value = timeStr;
+            }
         }
     });
 
     setEndBtn.addEventListener('click', () => {
         if (currentVideoElement) {
-            endTimeInput.value = formatTime(currentVideoElement.currentTime);
+            const timeStr = formatTime(currentVideoElement.currentTime);
+            const rows = segmentsContainer.querySelectorAll('.segment-row');
+            if (rows.length > 0) {
+                rows[rows.length - 1].querySelector('.end-time').value = timeStr;
+            }
         }
     });
+
+    // Handle adding and removing segments
+    addSegmentBtn.addEventListener('click', () => {
+        const row = document.createElement('div');
+        row.className = 'time-inputs segment-row';
+        row.style.position = 'relative';
+        row.innerHTML = `
+            <div class="input-group">
+                <label>開始時間 (留空則為開頭)</label>
+                <input type="text" class="start-time" placeholder="00:00:00">
+            </div>
+            <div class="input-group">
+                <label>結束時間 (留空則為結尾)</label>
+                <input type="text" class="end-time" placeholder="整部影片長度">
+            </div>
+            <button type="button" class="remove-segment-btn" style="position: absolute; right: -30px; top: 50%; transform: translateY(-20%); background: none; border: none; color: #ff6b6b; font-size: 1.2rem; cursor: pointer;" title="移除此片段">✖</button>
+        `;
+        segmentsContainer.appendChild(row);
+        updateRemoveButtons();
+    });
+
+    segmentsContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-segment-btn')) {
+            e.target.closest('.segment-row').remove();
+            updateRemoveButtons();
+        }
+    });
+
+    function updateRemoveButtons() {
+        const rows = segmentsContainer.querySelectorAll('.segment-row');
+        rows.forEach((row, index) => {
+            const btn = row.querySelector('.remove-segment-btn');
+            if (rows.length === 1) {
+                btn.classList.add('hidden');
+            } else {
+                btn.classList.remove('hidden');
+            }
+        });
+    }
+
+    updateRemoveButtons();
 
     function resetPreview() {
         videoPreview.innerHTML = '';
@@ -160,12 +211,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const url = urlInput.value;
-        const startTime = startTimeInput.value;
-        const endTime = endTimeInput.value;
         const quality = document.getElementById('quality') ? document.getElementById('quality').value : 'best';
         const videoTitle = videoTitleSpan.textContent.trim() || 'video';
+
+        // Gather all segments
+        const segments = [];
+        const rows = segmentsContainer.querySelectorAll('.segment-row');
+        rows.forEach(row => {
+            const st = row.querySelector('.start-time').value.trim();
+            const et = row.querySelector('.end-time').value.trim();
+            if (st || et) {
+                segments.push({ start_time: st, end_time: et });
+            }
+        });
+        
+        // If empty, default to full video download
+        if (segments.length === 0) {
+            segments.push({ start_time: "", end_time: "" });
+        }
 
         // Reset UI
         statusMessage.className = 'hidden';
@@ -183,8 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify({
                     url: url,
-                    start_time: startTime,
-                    end_time: endTime,
+                    segments: segments,
                     quality: quality,
                     title: videoTitle
                 })
@@ -218,9 +282,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         let safeTitle = videoTitle.replace(/[\\/:*?"<>|]/g, '_');
                         let filename = `${safeTitle}.mp4`;
-                        if (startTime.trim() || endTime.trim()) {
-                            const startLabel = startTime.trim() ? startTime.trim().replace(/:/g,'-') : 'start';
-                            const endLabel = endTime.trim() ? endTime.trim().replace(/:/g,'-') : 'end';
+                        if (segments.length > 1) {
+                            filename = `${safeTitle}_multi_clips.mp4`;
+                        } else if (segments.length === 1 && (segments[0].start_time || segments[0].end_time)) {
+                            const startLabel = segments[0].start_time ? segments[0].start_time.replace(/:/g,'-') : 'start';
+                            const endLabel = segments[0].end_time ? segments[0].end_time.replace(/:/g,'-') : 'end';
                             filename = `${safeTitle}_${startLabel}_${endLabel}.mp4`;
                         }
                         
