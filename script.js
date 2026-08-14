@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnText.classList.add('hidden');
         loader.classList.remove('hidden');
 
-        showStatus('處理中，這可能需要幾分鐘的時間，請稍候...', 'info');
+        showStatus('處理中，正在向伺服器發送請求...', 'info');
 
         try {
             const response = await fetch(`${API_BASE}api/clip`, {
@@ -191,33 +191,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(errorData.detail || `請求失敗 (${response.status})`);
             }
 
-            // Handle file download
-            const blob = await response.blob();
-            const downloadUrl = window.URL.createObjectURL(blob);
+            const initData = await response.json();
+            const taskId = initData.task_id;
             
-            let filename = 'video.mp4';
-            if (startTime.trim() || endTime.trim()) {
-                filename = `clip_${startTime.trim().replace(/:/g,'-')}_${endTime.trim().replace(/:/g,'-')}.mp4`;
-            }
-            const disposition = response.headers.get('Content-Disposition');
-            if (disposition && disposition.indexOf('filename=') !== -1) {
-                const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
-                if (matches != null && matches[1]) {
-                    filename = matches[1].replace(/['"]/g, '');
+            showStatus('已成功排程！影片正在 NAS 後台下載與剪輯，請耐心等候...', 'info');
+
+            // 輪詢狀態
+            const pollInterval = setInterval(async () => {
+                try {
+                    const statusRes = await fetch(`${API_BASE}api/status/${taskId}`);
+                    if (!statusRes.ok) return;
+                    
+                    const task = await statusRes.json();
+                    if (task.status === 'completed') {
+                        clearInterval(pollInterval);
+                        showStatus('剪輯完成！正在開始下載影片...', 'success');
+                        
+                        // 下載檔案
+                        const fileRes = await fetch(`${API_BASE}api/download/${taskId}`);
+                        const blob = await fileRes.blob();
+                        const downloadUrl = window.URL.createObjectURL(blob);
+                        
+                        let filename = 'video.mp4';
+                        if (startTime.trim() || endTime.trim()) {
+                            filename = `clip_${startTime.trim().replace(/:/g,'-')}_${endTime.trim().replace(/:/g,'-')}.mp4`;
+                        }
+                        
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = downloadUrl;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        
+                        window.URL.revokeObjectURL(downloadUrl);
+                        a.remove();
+                        
+                        // 恢復按鈕狀態
+                        submitBtn.disabled = false;
+                        btnText.classList.remove('hidden');
+                        loader.classList.add('hidden');
+                    } else if (task.status === 'failed') {
+                        clearInterval(pollInterval);
+                        showStatus(`擷取失敗：${task.error}`, 'error');
+                        submitBtn.disabled = false;
+                        btnText.classList.remove('hidden');
+                        loader.classList.add('hidden');
+                    }
+                } catch (pollErr) {
+                    console.error('Polling error:', pollErr);
                 }
-            }
-
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = downloadUrl;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            
-            window.URL.revokeObjectURL(downloadUrl);
-            a.remove();
-
-            showStatus('擷取成功！影片已開始下載。', 'success');
+            }, 3000); // 每 3 秒輪詢一次
 
         } catch (error) {
             console.error('Error:', error);
