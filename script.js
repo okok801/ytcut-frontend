@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const initData = await response.json();
             const taskId = initData.task_id;
             
-            showStatus('已成功排程！影片正在 NAS 後台下載與剪輯，請耐心等候...', 'info');
+            showStatus('已成功排程！伺服器正在後台處理影片下載與剪輯，請耐心等候...', 'info');
 
             // 輪詢狀態
             const pollInterval = setInterval(async () => {
