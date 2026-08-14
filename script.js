@@ -195,7 +195,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const blob = await response.blob();
             const downloadUrl = window.URL.createObjectURL(blob);
             
-            let filename = `clip_${startTime.replace(/:/g,'-')}_${endTime.replace(/:/g,'-')}.mp4`;
+            let filename = 'video.mp4';
+            if (startTime.trim() || endTime.trim()) {
+                filename = `clip_${startTime.trim().replace(/:/g,'-')}_${endTime.trim().replace(/:/g,'-')}.mp4`;
+            }
             const disposition = response.headers.get('Content-Disposition');
             if (disposition && disposition.indexOf('filename=') !== -1) {
                 const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
