@@ -214,7 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         let filename = 'video.mp4';
                         if (startTime.trim() || endTime.trim()) {
-                            filename = `clip_${startTime.trim().replace(/:/g,'-')}_${endTime.trim().replace(/:/g,'-')}.mp4`;
+                            const startLabel = startTime.trim() ? startTime.trim().replace(/:/g,'-') : 'start';
+                            const endLabel = endTime.trim() ? endTime.trim().replace(/:/g,'-') : 'end';
+                            filename = `clip_${startLabel}_${endLabel}.mp4`;
                         }
                         
                         const a = document.createElement('a');
