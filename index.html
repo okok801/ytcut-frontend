@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClipMaster - 影片片段擷取神器 (GitHub Pages版)</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+    
+    <main class="glass-container">
+        <header>
+            <h1>ClipMaster</h1>
+            <p>輕鬆擷取 YouTube 與 Bilibili 影片片段</p>
+        </header>
+
+        <form id="clip-form">
+            <div class="input-group">
+                <label for="url">影片網址</label>
+                <input type="url" id="url" placeholder="https://www.youtube.com/watch?v=..." required>
+            </div>
+
+            <div id="video-preview" class="hidden">
+                <!-- Video or Iframe will be injected here -->
+            </div>
+
+            <div id="preview-info" class="hidden">
+                <span class="video-title"></span>
+            </div>
+            
+            <div id="preview-controls" class="hidden">
+                <button type="button" id="set-start-btn" class="control-btn">設為開始時間</button>
+                <button type="button" id="set-end-btn" class="control-btn">設為結束時間</button>
+            </div>
+
+            <div class="time-inputs">
+                <div class="input-group">
+                    <label for="start-time">開始時間 (HH:MM:SS)</label>
+                    <input type="text" id="start-time" placeholder="00:00:10" pattern="^([0-9]{2}:)?[0-9]{2}:[0-9]{2}$" required>
+                </div>
+                <div class="input-group">
+                    <label for="end-time">結束時間 (HH:MM:SS)</label>
+                    <input type="text" id="end-time" placeholder="00:00:20" pattern="^([0-9]{2}:)?[0-9]{2}:[0-9]{2}$" required>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn">
+                <span class="btn-text">開始擷取</span>
+                <div class="loader hidden"></div>
+            </button>
+        </form>
+
+        <div id="status-message" class="hidden"></div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
