@@ -283,9 +283,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // Gather all segments
         const segments = [];
         const rows = segmentsContainer.querySelectorAll('.segment-row');
-        rows.forEach(row => {
+        rows.forEach((row, index) => {
             const st = row.querySelector('.start-time').value.trim();
-            const et = row.querySelector('.end-time').value.trim();
+            let et = row.querySelector('.end-time').value.trim();
+            
+            // 如果當前片段的結束時間沒填，且有下一個片段的開始時間，自動帶入
+            if (!et && index < rows.length - 1) {
+                const nextRow = rows[index + 1];
+                const nextSt = nextRow.querySelector('.start-time').value.trim();
+                if (nextSt) {
+                    et = nextSt;
+                    row.querySelector('.end-time').value = nextSt; // 同步更新畫面
+                }
+            }
+
             if (st || et) {
                 segments.push({ start_time: st, end_time: et });
             }
