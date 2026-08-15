@@ -124,6 +124,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentVideoElement = null;
                     showStatus('已載入 Bilibili 備用預覽播放器。（請手動填寫時間）', 'success');
                 }
+                else if (data.platform === 'facebook') {
+                    videoPreview.innerHTML = `
+                        <iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false" scrolling="no" border="0" frameborder="no" allowfullscreen="true" style="border:none;overflow:hidden;width:100%;height:100%;"></iframe>
+                    `;
+                    videoPreview.classList.remove('hidden');
+                    previewControls.classList.add('hidden');
+                    currentVideoElement = null;
+                    showStatus('已載入 Facebook 影片。（FB限制較多，請手動輸入時間）', 'success');
+                }
                 else {
                     throw new Error('未支援的平台或解析失敗');
                 }
