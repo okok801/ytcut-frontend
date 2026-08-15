@@ -157,33 +157,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handle adding and removing segments
-    addSegmentBtn.addEventListener('click', () => {
+    function createSegmentRow() {
         const row = document.createElement('div');
         row.className = 'time-inputs segment-row';
-        row.style.position = 'relative';
+        row.style.alignItems = 'center';
+        row.style.marginBottom = '0.5rem';
         row.innerHTML = `
-            <div class="input-group">
-                <label>開始時間 (留空則為開頭)</label>
+            <div class="input-group" style="margin-bottom: 0;">
+                <label>開始時間</label>
                 <input type="text" class="start-time" placeholder="00:00:00">
             </div>
-            <div class="input-group">
-                <label>結束時間 (留空則為結尾)</label>
-                <input type="text" class="end-time" placeholder="整部影片長度">
+            <div class="input-group" style="margin-bottom: 0;">
+                <label>結束時間</label>
+                <input type="text" class="end-time" placeholder="到結尾">
             </div>
-            <button type="button" class="remove-segment-btn" style="position: absolute; right: -30px; top: 50%; transform: translateY(-20%); background: none; border: none; color: #ff6b6b; font-size: 1.2rem; cursor: pointer;" title="移除此片段">✖</button>
+            <button type="button" class="remove-segment-btn" style="background: none; border: none; color: #ff6b6b; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; width: auto; margin-top: 1.2rem;">✖</button>
         `;
+        
+        row.querySelector('.remove-segment-btn').addEventListener('click', () => {
+            row.remove();
+            updateRemoveButtons();
+        });
         segmentsContainer.appendChild(row);
         updateRemoveButtons();
-    });
+    }
 
-    segmentsContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove-segment-btn')) {
-            e.target.closest('.segment-row').remove();
-            updateRemoveButtons();
-        }
+    // Handle adding segments
+    addSegmentBtn.addEventListener('click', () => {
+        createSegmentRow();
     });
-
     function updateRemoveButtons() {
         const rows = segmentsContainer.querySelectorAll('.segment-row');
         rows.forEach((row, index) => {

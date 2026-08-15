@@ -49,16 +49,16 @@
             </div>
 
             <div id="segments-container">
-                <div class="time-inputs segment-row" style="position: relative;">
-                    <div class="input-group">
-                        <label>開始時間 (留空則為開頭)</label>
+                <div class="time-inputs segment-row" style="align-items: center; margin-bottom: 0.5rem;">
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>開始時間</label>
                         <input type="text" class="start-time" placeholder="00:00:00">
                     </div>
-                    <div class="input-group">
-                        <label>結束時間 (留空則為結尾)</label>
-                        <input type="text" class="end-time" placeholder="整部影片長度">
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>結束時間</label>
+                        <input type="text" class="end-time" placeholder="到結尾">
                     </div>
-                    <button type="button" class="remove-segment-btn hidden" style="position: absolute; right: -30px; top: 50%; transform: translateY(-20%); background: none; border: none; color: #ff6b6b; font-size: 1.2rem; cursor: pointer;">✖</button>
+                    <button type="button" class="remove-segment-btn hidden" style="background: none; border: none; color: #ff6b6b; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; width: auto; margin-top: 1.2rem;">✖</button>
                 </div>
             </div>
             <button type="button" id="add-segment-btn" class="control-btn" style="margin-top: 0.5rem; width: 100%; background: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(255,255,255,0.3);">+ 新增擷取片段 (可合併多段)</button>
