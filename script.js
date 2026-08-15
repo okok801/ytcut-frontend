@@ -369,29 +369,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         clearInterval(pollInterval);
                         showStatus('剪輯完成！正在開始下載影片...', 'success');
                         
-                        // 下載檔案
-                        const fileRes = await fetch(`${API_BASE}api/download/${taskId}`);
-                        const blob = await fileRes.blob();
-                        const downloadUrl = window.URL.createObjectURL(blob);
-                        
-                        let safeTitle = videoTitle.replace(/[\\/:*?"<>|]/g, '_');
-                        let filename = `${safeTitle}.mp4`;
-                        if (segments.length > 1) {
-                            filename = `${safeTitle}_multi_clips.mp4`;
-                        } else if (segments.length === 1 && (segments[0].start_time || segments[0].end_time)) {
-                            const startLabel = segments[0].start_time ? segments[0].start_time.replace(/:/g,'-') : 'start';
-                            const endLabel = segments[0].end_time ? segments[0].end_time.replace(/:/g,'-') : 'end';
-                            filename = `${safeTitle}_${startLabel}_${endLabel}.mp4`;
-                        }
+                        // 下載檔案：直接使用 a 標籤觸發瀏覽器原生下載，避免 Blob 導致記憶體不足或無進度條
+                        const downloadUrl = `${API_BASE}api/download/${taskId}`;
                         
                         const a = document.createElement('a');
                         a.style.display = 'none';
                         a.href = downloadUrl;
-                        a.download = filename;
+                        a.download = ''; 
                         document.body.appendChild(a);
                         a.click();
                         
-                        window.URL.revokeObjectURL(downloadUrl);
                         a.remove();
                         
                         // 恢復按鈕狀態
