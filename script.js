@@ -160,7 +160,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     showStatus('已連結 Instagram 影片。（請手動輸入時間）', 'success');
                 }
                 else {
-                    throw new Error('未支援的平台或解析失敗');
+                    const platformName = data.platform.charAt(0).toUpperCase() + data.platform.slice(1);
+                    videoPreview.innerHTML = `
+                        <div style="display:flex; justify-content:center; align-items:center; height:100%; color:#fff; text-align:center; padding:1rem; flex-direction:column; background:rgba(0,0,0,0.5);">
+                            <span style="font-size:3rem; margin-bottom:1rem;">🌐</span>
+                            <h3>${platformName} 影片已連結</h3>
+                            <p style="margin-top:0.5rem; color:#ccc;">此平台不支援網頁預覽，請手動輸入擷取時間。</p>
+                        </div>
+                    `;
+                    videoPreview.classList.remove('hidden');
+                    previewControls.classList.add('hidden');
+                    currentVideoElement = null;
+                    showStatus(`已連結 ${platformName} 影片。（請手動輸入時間）`, 'success');
                 }
 
             } catch (error) {
