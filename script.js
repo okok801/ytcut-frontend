@@ -188,7 +188,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const timeStr = formatTime(currentVideoElement.currentTime);
             const rows = segmentsContainer.querySelectorAll('.segment-row');
             if (rows.length > 0) {
-                rows[rows.length - 1].querySelector('.start-time').value = timeStr;
+                const lastRow = rows[rows.length - 1];
+                const startInput = lastRow.querySelector('.start-time');
+                if (startInput.value !== '') {
+                    createSegmentRow();
+                    const newRows = segmentsContainer.querySelectorAll('.segment-row');
+                    newRows[newRows.length - 1].querySelector('.start-time').value = timeStr;
+                } else {
+                    startInput.value = timeStr;
+                }
             }
         }
     });
@@ -198,7 +206,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const timeStr = formatTime(currentVideoElement.currentTime);
             const rows = segmentsContainer.querySelectorAll('.segment-row');
             if (rows.length > 0) {
-                rows[rows.length - 1].querySelector('.end-time').value = timeStr;
+                const lastRow = rows[rows.length - 1];
+                const endInput = lastRow.querySelector('.end-time');
+                if (endInput.value !== '') {
+                    createSegmentRow();
+                    const newRows = segmentsContainer.querySelectorAll('.segment-row');
+                    newRows[newRows.length - 1].querySelector('.end-time').value = timeStr;
+                } else {
+                    endInput.value = timeStr;
+                }
             }
         }
     });
