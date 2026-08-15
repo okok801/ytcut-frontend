@@ -190,7 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rows.length > 0) {
                 const lastRow = rows[rows.length - 1];
                 const startInput = lastRow.querySelector('.start-time');
-                if (startInput.value !== '') {
+                const endInput = lastRow.querySelector('.end-time');
+                if (startInput.value !== '' && endInput.value !== '') {
                     createSegmentRow();
                     const newRows = segmentsContainer.querySelectorAll('.segment-row');
                     newRows[newRows.length - 1].querySelector('.start-time').value = timeStr;
@@ -207,8 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const rows = segmentsContainer.querySelectorAll('.segment-row');
             if (rows.length > 0) {
                 const lastRow = rows[rows.length - 1];
+                const startInput = lastRow.querySelector('.start-time');
                 const endInput = lastRow.querySelector('.end-time');
-                if (endInput.value !== '') {
+                if (startInput.value !== '' && endInput.value !== '') {
                     createSegmentRow();
                     const newRows = segmentsContainer.querySelectorAll('.segment-row');
                     newRows[newRows.length - 1].querySelector('.end-time').value = timeStr;
