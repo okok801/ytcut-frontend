@@ -307,6 +307,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const url = urlInput.value;
         const quality = document.getElementById('quality') ? document.getElementById('quality').value : 'best';
+        const cropVerticalEl = document.getElementById('crop_vertical');
+        const crop_vertical_val = cropVerticalEl ? cropVerticalEl.checked : false;
         const videoTitle = videoTitleSpan.textContent.trim() || 'video';
 
         // Gather all segments
@@ -373,14 +375,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     url: url,
                     segments: segments,
                     quality: quality,
-                    crop_vertical: crop_vertical,
+                    crop_vertical: crop_vertical_val,
                     title: videoTitle
                 })
             });
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.detail || `請求失敗 (${response.status})`);
+                throw new Error(typeof errorData.detail === "object" ? JSON.stringify(errorData.detail) : errorData.detail || `請求失敗 (${response.status})`);
             }
 
             const initData = await response.json();
