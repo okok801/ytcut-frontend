@@ -47,7 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch(`${API_BASE}api/info?url=${encodeURIComponent(url)}`);
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.detail || '無法解析此影片連結');
+                    const detail = errorData.detail;
+                    const message = detail && typeof detail === 'object'
+                        ? detail.message
+                        : detail;
+                    const error = new Error(message || '無法解析此影片連結');
+                    error.code = detail && typeof detail === 'object' ? detail.code : undefined;
+                    throw error;
                 }
 
                 const data = await response.json();
@@ -81,8 +87,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     videoPreview.classList.remove('hidden');
                     previewControls.classList.remove('hidden');
                     
-                    const videoEl = document.getElementById('native-player');
-                    currentVideoElement = videoEl;
+                     const videoEl = document.getElementById('native-player');
+                     currentVideoElement = videoEl;
+
+                     // Facebook CDN URLs can expire or reject proxy playback.
+                     // Keep the public embed as a graceful fallback for those cases.
+                     if (data.platform === 'facebook') {
+                         videoEl.addEventListener('error', () => {
+                             videoPreview.innerHTML = `
+                                 <iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false" scrolling="no" border="0" frameborder="no" allowfullscreen="true" style="border:none;overflow:hidden;width:100%;height:100%;"></iframe>
+                             `;
+                             currentVideoElement = null;
+                             previewControls.classList.add('hidden');
+                             showStatus('串流網址已失效，已改用 Facebook 嵌入播放器。', 'info');
+                         }, { once: true });
+                     }
 
                     if (data.platform === 'bilibili' && data.audio_url) {
                         const audioEl = document.getElementById('sync-audio');
@@ -176,7 +195,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error(error);
-                showStatus(`預覽載入失敗: ${error.message}，請確認後端 NAS 連線狀態。`, 'error');
+                let nasOnline = false;
+                try {
+                    const health = await fetch(`${API_BASE}api/health`, { cache: 'no-store' });
+                    nasOnline = health.ok;
+                } catch (_) {
+                    nasOnline = false;
+                }
+                const message = nasOnline
+                    ? `YouTube 擷取失敗：${error.message}`
+                    : 'NAS 連線失敗：目前無法連到後端服務，請稍後再試。';
+                showStatus(message, 'error');
                 resetPreview();
             }
         }, 1000);
