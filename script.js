@@ -404,7 +404,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         const a = document.createElement('a');
                         a.style.display = 'none';
                         a.href = downloadUrl;
-                        a.download = ''; 
+                        if (task.out_filename) {
+                            a.download = task.out_filename;
+                        }
                         document.body.appendChild(a);
                         a.click();
                         
