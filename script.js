@@ -373,6 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     url: url,
                     segments: segments,
                     quality: quality,
+                    crop_vertical: crop_vertical,
                     title: videoTitle
                 })
             });
