@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClipMaster - 影片片段擷取神器 (GitHub Pages版)</title>
+    <link rel="stylesheet" href="style.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+    
+    <main class="glass-container">
+        <header>
+            <h1>ClipMaster</h1>
+            <p>輕鬆擷取 YouTube 與 Bilibili 影片片段</p>
+        </header>
+
+        <form id="clip-form">
+            <div class="input-group">
+                <label for="url">影片網址</label>
+                <input type="url" id="url" placeholder="Youtube / Bilibili / FB / IG / X 等 1000+ 網站" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="quality">下載畫質 (影響下載速度與檔案大小)</label>
+                <select id="quality" style="width: 100%; padding: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: #fff; font-size: 1rem; margin-top: 0.5rem; outline: none; appearance: none; -moz-appearance: none; -webkit-appearance: none;">
+                    <option value="best" style="background: #1e1e2e; color: #fff;">最高畫質 (檔案最大，最慢)</option>
+                    <option value="1080" style="background: #1e1e2e; color: #fff;">1080p 高畫質</option>
+                    <option value="720" style="background: #1e1e2e; color: #fff;" selected>720p 標準畫質 (推薦，速度較快)</option>
+                    <option value="480" style="background: #1e1e2e; color: #fff;">480p 低畫質 (最快)</option>
+                    <option value="mp3" style="background: #1e1e2e; color: #fff;">MP3 純音檔 (超快)</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="crop_vertical" style="width: 18px; height: 18px; accent-color: #fca311;">
+                    <span style="font-weight: 500;">✂️ 裁切左右黑邊 (保留中間 4:3 畫面)</span>
+                </label>
+            </div>
+
+            <div id="video-preview" class="hidden">
+                <!-- Video or Iframe will be injected here -->
+            </div>
+
+            <div id="preview-info" class="hidden">
+                <span class="video-title"></span>
+            </div>
+            
+            <div id="preview-controls" class="hidden">
+                <button type="button" id="set-start-btn" class="control-btn">設為開始時間</button>
+                <button type="button" id="set-end-btn" class="control-btn">設為結束時間</button>
+            </div>
+
+            <div id="segments-container">
+                <div class="time-inputs segment-row" style="align-items: center; margin-bottom: 0.5rem;">
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>開始時間</label>
+                        <input type="text" class="start-time" placeholder="00:00:00">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>結束時間</label>
+                        <input type="text" class="end-time" placeholder="到結尾">
+                    </div>
+                    <button type="button" class="remove-segment-btn hidden" style="background: none; border: none; color: #ff6b6b; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; width: auto; margin-top: 1.2rem;">✖</button>
+                </div>
+            </div>
+            <button type="button" id="add-segment-btn" class="control-btn hidden" style="margin-top: 0.5rem; width: 100%; background: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(255,255,255,0.3);">+ 新增擷取片段 (可合併多段)</button>
+
+            <button type="submit" id="submit-btn">
+                <span class="btn-text">開始擷取</span>
+                <div class="loader hidden"></div>
+            </button>
+        </form>
+
+        <div id="status-message" class="hidden"></div>
+    </main>
+
+    <script src="script.js?v=6"></script>
+</body>
+</html>
