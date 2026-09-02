@@ -9,7 +9,6 @@ services:
     container_name: clipmaster
     network_mode: host
     volumes:
-      - ./downloads:/app/downloads
+      - ./downloads:/app/backend/downloads
       - ./frontend:/app/frontend
-      - ./backend:/app/backend
     restart: unless-stopped
