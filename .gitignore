@@ -1,0 +1,7 @@
+downloads/
+*.log
+*.json
+__pycache__/
+backend/cookies.txt
+backend/__pycache__/
+frontend/__pycache__/

@@ -14,12 +14,6 @@ from typing import List, Dict
 
 app = FastAPI()
 
-# Auto update yt-dlp on startup to fix 403 forbidden errors
-try:
-    subprocess.run([sys.executable, "-m", "pip", "install", "-U", "yt-dlp"], check=False)
-except Exception:
-    pass
-
 # Pure ASGI Middleware to strip Web Station Alias prefix (/cut) before routing
 class StripAliasMiddleware:
     def __init__(self, app):
@@ -77,6 +71,10 @@ def make_youtube_ydl_options():
 def is_youtube_url(url: str) -> bool:
     lowered = url.lower()
     return "youtube.com" in lowered or "youtu.be" in lowered
+
+def is_threads_url(url: str) -> bool:
+    lowered = url.lower()
+    return "threads.net" in lowered or "threads.com" in lowered
 
 class ClipRequest(BaseModel):
     url: str
@@ -392,7 +390,7 @@ async def get_info(url: str):
             platform = "facebook"
             stream_url = info.get('url')
         elif 'threads' in extractor or 'instagram' in extractor:
-            platform = "threads" if 'threads.net' in url else "instagram"
+            platform = "threads" if is_threads_url(url) else "instagram"
             stream_url = info.get('url')
         else:
             platform = extractor if extractor else "generic"
@@ -416,7 +414,7 @@ async def get_info(url: str):
                 "platform": "facebook",
                 "bvid": None
             }
-        if "threads.net" in url:
+        if is_threads_url(url):
             return {
                 "title": "Threads Video",
                 "duration": 0,

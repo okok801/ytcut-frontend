@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     nasOnline = false;
                 }
                 const message = nasOnline
-                    ? `YouTube 擷取失敗：${error.message}`
+                    ? `${sourceName} 擷取失敗：${error.message}`
                     : 'NAS 連線失敗：目前無法連到後端服務，請稍後再試。';
                 showStatus(message, 'error');
                 resetPreview();
