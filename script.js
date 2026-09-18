@@ -14,11 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const loader = submitBtn.querySelector('.loader');
     const statusMessage = document.getElementById('status-message');
 
-    // 固定為您的 NAS 公網 API 網址
-    const API_BASE = 'https://okok802.synology.me/cut/';
+    const DIRECT_APP_URL = 'http://okok802.synology.me:8000/';
+    const NAS_ALIAS_API_BASE = 'https://okok802.synology.me/cut/';
+    const API_BASE = (window.location.hostname === 'okok802.synology.me' && window.location.port === '8000')
+        ? `${window.location.origin}/`
+        : NAS_ALIAS_API_BASE;
 
     let currentVideoElement = null;
     let urlTimeout = null;
+
+    checkGithubBackendRoute();
 
     // Helper to format seconds to HH:MM:SS
     function formatTime(seconds) {
@@ -440,6 +445,39 @@ document.addEventListener('DOMContentLoaded', () => {
             loader.classList.add('hidden');
         }
     });
+
+    async function checkGithubBackendRoute() {
+        if (API_BASE !== NAS_ALIAS_API_BASE) return;
+        try {
+            const health = await fetch(`${API_BASE}api/health`, { cache: 'no-store' });
+            if (health.ok) return;
+        } catch (_) {
+        }
+
+        showStatusWithLink(
+            'GitHub Pages 目前無法連到 NAS 的 HTTPS 入口，將改用 NAS 直連版。',
+            '開啟 NAS 直連版',
+            DIRECT_APP_URL,
+            'error'
+        );
+        setTimeout(() => {
+            window.location.href = DIRECT_APP_URL;
+        }, 1200);
+    }
+
+    function showStatusWithLink(message, linkText, href, type) {
+        statusMessage.textContent = '';
+        statusMessage.className = `status-${type}`;
+        statusMessage.classList.remove('hidden');
+        statusMessage.append(document.createTextNode(`${message} `));
+        const link = document.createElement('a');
+        link.href = href;
+        link.textContent = linkText;
+        link.style.color = 'inherit';
+        link.style.fontWeight = '700';
+        link.rel = 'noopener';
+        statusMessage.append(link);
+    }
 
     function showStatus(message, type) {
         statusMessage.textContent = message;
