@@ -6,7 +6,7 @@ import asyncio
 import yt_dlp
 import httpx
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -695,6 +695,11 @@ async def stream_proxy(url: str, request: Request, type: str = None):
             raise
         raise HTTPException(status_code=500, detail=f"Proxy error: {str(e)}")
 
+# Backward-compatible alias: /cut/frontend points to the mounted frontend root.
+@app.get("/frontend", include_in_schema=False)
+@app.get("/frontend/", include_in_schema=False)
+async def frontend_alias():
+    return RedirectResponse(url="/cut/", status_code=307)
 # Mount frontend files at the root (placed after API routes to avoid overriding them)
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
 if os.path.exists(frontend_path):
