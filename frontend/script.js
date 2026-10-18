@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusMessage = document.getElementById('status-message');
 
     const DIRECT_APP_URL = 'http://192.168.0.200:8000/';
-    const NAS_ALIAS_API_BASE = 'https://okok802.synology.me/cut/';
+    const NAS_ALIAS_API_BASE = 'http://okok802.synology.me:8000/';
     const IS_DIRECT_APP = (window.location.hostname === 'okok802.synology.me' || window.location.hostname === '192.168.0.200') && window.location.port === '8000';
     const API_BASE = IS_DIRECT_APP
         ? `${window.location.origin}/`
