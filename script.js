@@ -455,15 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {
         }
 
-        showStatusWithLink(
-            'GitHub Pages 目前無法連到 NAS 的 HTTPS 入口，將改用 NAS 直連版。',
-            '開啟 NAS 直連版',
-            DIRECT_APP_URL,
-            'error'
-        );
-        setTimeout(() => {
-            window.location.href = DIRECT_APP_URL;
-        }, 1200);
+        showStatus('後端服務目前未連線，GitHub Pages 僅提供前端介面。', 'info');
     }
 
     function showStatusWithLink(message, linkText, href, type) {
